@@ -14,7 +14,7 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(ToDoListModelAdapter());
   // open a box
-  var box = await Hive.openBox('mybox');
+   await Hive.openBox('mybox');
 
   runApp(const MyApp());
 }

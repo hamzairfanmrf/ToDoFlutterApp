@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:todoflutter/util/colors.dart';
 import 'package:todoflutter/view_model/weatherViewModel.dart';
 
 class WeatherDisplay extends StatelessWidget {
@@ -37,22 +38,22 @@ class WeatherDisplay extends StatelessWidget {
                       color: Colors.white,
                     ),
                     Text(
-                      '${weatherData?.temperature?.ceil()}°C',
-                      style: TextStyle(
+                      '${weatherData?.temperature.ceil()}°C',
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: AppColors.whiteColor,
                       ),
                     ),
                   ],
                 ),
                 SizedBox(height: 16),
-                Text(
+                const Text(
                   'Weather',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: AppColors.whiteColor,
                   ),
                 ),
                 SizedBox(height: 8),
