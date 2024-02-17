@@ -1,20 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:todoflutter/util/colors.dart';
 
-class MyButton extends StatelessWidget {
-  final String text;
+class CommonElevatedButton extends StatelessWidget {
   final VoidCallback onPressed;
-  MyButton({
-    super.key,
-    required this.text,
+  final IconData icon;
+
+  const CommonElevatedButton({
+    Key? key,
     required this.onPressed,
-  });
+    required this.icon,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return MaterialButton(
+    return ElevatedButton(
       onPressed: onPressed,
-      color: Theme.of(context).primaryColor,
-      child: Text(text),
+      style: ElevatedButton.styleFrom(
+        primary: AppColors.primaryColor,
+        shape: CircleBorder(),
+        padding: EdgeInsets.all(16),
+      ),
+      child: Icon(icon, color: AppColors.whiteColor),
     );
   }
 }

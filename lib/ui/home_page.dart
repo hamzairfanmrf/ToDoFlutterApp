@@ -7,6 +7,7 @@ import 'package:todoflutter/view_model/tasklistviewmodel.dart';
 import 'package:todoflutter/view_model/weatherViewModel.dart';
 
 import '../util/dialog_box.dart';
+import '../util/my_button.dart';
 import '../util/todo_tile.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
@@ -49,22 +50,18 @@ class _HomePageState extends State<HomePage> {
           floatingActionButton: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              ElevatedButton(
+              CommonElevatedButton(
                 onPressed: () {
                   controller.createNewTask(context);
                 },
-                style: ElevatedButton.styleFrom(
-                  primary: AppColors.primaryColor,
-                  shape: CircleBorder(),
-                  padding: EdgeInsets.all(16),
-                ),
-                child: Icon(Icons.add, color: AppColors.whiteColor),
+                icon: Icons.add,
               ),
-              SizedBox(
+
+              const SizedBox(
                 height: 5,
               ),
-              ElevatedButton(
-                onPressed: () async {
+              CommonElevatedButton(
+                onPressed: () async{
                   var location=await weatherController.determinePosition();
                   await weatherController.fetchWeather(location.latitude, location.longitude).then((value) => {
 
@@ -72,23 +69,13 @@ class _HomePageState extends State<HomePage> {
 
                   if(weatherController.weatherData.value!.weatherDescription.isNotEmpty){
 
-                    Get.to(() => WeatherDisplay());
+                    Get.to(() =>  WeatherDisplay());
 
                   }
-
-
-                  // Get.to(WeatherDisplay());
-                  // var location = await controller.read<WeatherViewModel>().determinePosition();
-                  // controller.read<WeatherViewModel>().fetchWeather(location.latitude, location.longitude);
-
                 },
-                style: ElevatedButton.styleFrom(
-                  primary: const Color(0xFF675DFB),
-                  shape: CircleBorder(),
-                  padding: EdgeInsets.all(16),
-                ),
-                child: Icon(Icons.cloud, color: AppColors.whiteColor),
+                icon: Icons.cloud,
               ),
+
             ],
           ),
           body: SingleChildScrollView(
@@ -211,11 +198,12 @@ class _HomePageState extends State<HomePage> {
                       padding: const EdgeInsets.all(10.0),
                       child: Container(
                         decoration: BoxDecoration(
-                          color: AppColors.yellowColor,
+                          color: Colors.teal,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         padding: const EdgeInsets.symmetric(horizontal: 5.0),
                         child: DropdownButton<String>(
+                          dropdownColor: Colors.teal,
                           hint: const Text('Select Priority'),
                           value: controller.dropdownValue.value,
                           onChanged: (String? newValue) {
@@ -229,7 +217,7 @@ class _HomePageState extends State<HomePage> {
                                 value: value,
                                 child: Text(value,
                                   style: TextStyle(
-                                      color: textColor
+                                      color: AppColors.whiteColor
                                   ),
                                 ),
                               );

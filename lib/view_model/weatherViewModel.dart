@@ -133,7 +133,7 @@ class WeatherViewModel extends GetxController {
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
         weatherData.value = WeatherModel.fromJson(jsonResponse);
-        update();
+
         // print(weatherData.value!.weatherDescription);
 
       } else {

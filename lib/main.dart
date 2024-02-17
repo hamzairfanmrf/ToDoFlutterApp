@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:todoflutter/ui/home_page.dart';
 import 'package:todoflutter/util/colors.dart';
 import 'package:get/get.dart';
+import 'package:todoflutter/view_model/tasklistviewmodel.dart';
+import 'package:todoflutter/view_model/weatherViewModel.dart';
 
 
 import 'data/adapter.dart';
@@ -23,6 +24,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Get.put(WeatherViewModel());
+    Get.put(TaskListViewModel());
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       home: HomePage(),
@@ -31,7 +34,7 @@ class MyApp extends StatelessWidget {
         // Additional light theme settings
       ),
       darkTheme: ThemeData.dark().copyWith(
-        colorScheme: ColorScheme.dark(
+        colorScheme: const ColorScheme.dark(
           primary: AppColors.blackColor,
           // Additional dark theme settings
         ),
