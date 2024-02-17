@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:todoflutter/ui/home_page.dart';
 import 'package:todoflutter/util/colors.dart';
-import 'package:todoflutter/view_model/tasklistviewmodel.dart';
-import 'package:provider/provider.dart';
-import 'package:todoflutter/view_model/weatherViewModel.dart';
+import 'package:get/get.dart';
+
 
 import 'data/adapter.dart';
 
@@ -23,32 +23,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => TaskListViewModel()),
-        ChangeNotifierProvider(create: (_) => WeatherViewModel()),
-      ],
-      child: Consumer<TaskListViewModel>(
-        builder: (context, viewModel, child) {
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            home: HomePage(),
-            theme: ThemeData.light().copyWith(
-              primaryColor: AppColors.primaryColor,
-              // Additional light theme settings
-            ),
-            darkTheme: ThemeData.dark().copyWith(
-              colorScheme: ColorScheme.dark(
-                primary: AppColors.blackColor,
-                // Additional dark theme settings
-              ),
-            ),
-            themeMode: viewModel.isDarkEnabled
-                ? ThemeMode.dark
-                : ThemeMode.light,
-          );
-        },
+    return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: HomePage(),
+      theme: ThemeData.light().copyWith(
+        primaryColor: AppColors.primaryColor,
+        // Additional light theme settings
       ),
+      darkTheme: ThemeData.dark().copyWith(
+        colorScheme: ColorScheme.dark(
+          primary: AppColors.blackColor,
+          // Additional dark theme settings
+        ),
+      ),
+      themeMode: ThemeMode.system, // Use system theme by default
     );
   }
 }

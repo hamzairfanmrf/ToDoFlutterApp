@@ -1,40 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:todoflutter/util/text_button.dart';
 import 'package:todoflutter/view_model/tasklistviewmodel.dart';
-import 'package:provider/provider.dart';
 
 class DialogBox extends StatefulWidget {
-  final TextEditingController controller;
-  final Function() onSave;
-  final Function() onCancel;
+  final bool isEditMode;
+  final int index;
 
-  const DialogBox({
-    Key? key,
-    required this.controller,
-    required this.onSave,
-    required this.onCancel,
-  }) : super(key: key);
-
+  DialogBox({Key? key, required this.isEditMode,required this.index}) : super(key: key);
   @override
-  _DialogBoxState createState() => _DialogBoxState();
+  State<DialogBox> createState() => _DialogBoxState();
 }
 
 class _DialogBoxState extends State<DialogBox> {
-  DateTime? selectedDate;
-  TimeOfDay? selectedTime;
-  String? selectedPriority;
-  TextEditingController desc = TextEditingController();
+  final TextEditingController controller = TextEditingController();
+
+  final TextEditingController desc = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    final taskListController = Get.find<TaskListViewModel>();
+
     return AlertDialog(
       title: const Text('Add New Task'),
       content: SingleChildScrollView(
         child: Column(
           children: [
             TextField(
-              controller: widget.controller,
+              controller: controller,
               decoration: const InputDecoration(labelText: 'Task Name'),
             ),
             const SizedBox(height: 20),
@@ -45,13 +39,12 @@ class _DialogBoxState extends State<DialogBox> {
             const SizedBox(height: 20),
             DropdownButton<String>(
               hint: const Text('Select Priority'),
-              value: selectedPriority,
+              value: taskListController.selectedPriority.value,
               onChanged: (String? newValue) {
-                setState(() {
-                  selectedPriority = newValue;
-                });
+                taskListController.setSelectedPriority(newValue!);
+                // taskListController.update(); // Update the UI
               },
-              items: <String>['High Priority', 'Normal Priority']
+              items: taskListController.priorityItems
                   .map<DropdownMenuItem<String>>(
                     (String value) {
                   return DropdownMenuItem<String>(
@@ -59,8 +52,13 @@ class _DialogBoxState extends State<DialogBox> {
                     child: Text(value),
                   );
                 },
-              ).toList(),
+              )
+                  .toList(),
             ),
+
+
+
+
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
@@ -72,16 +70,14 @@ class _DialogBoxState extends State<DialogBox> {
                 );
 
                 if (date != null) {
-                  setState(() {
-                    selectedDate = date;
-                  });
+                  taskListController.setSelectedDate(date);
                 }
               },
               child: const Text('Pick Date'),
             ),
-            if (selectedDate != null)
+            if (taskListController.selectedDate != null)
               Text(
-                'Date: ${DateFormat('dd/MM/yyyy').format(selectedDate!)}',
+                'Date: ${DateFormat('dd/MM/yyyy').format(taskListController.selectedDate!)}',
                 style: TextStyle(fontSize: 16),
               ),
             const SizedBox(height: 20),
@@ -93,16 +89,14 @@ class _DialogBoxState extends State<DialogBox> {
                 );
 
                 if (time != null) {
-                  setState(() {
-                    selectedTime = time;
-                  });
+                  taskListController.setSelectedTime(time);
                 }
               },
               child: const Text('Pick Time'),
             ),
-            if (selectedTime != null)
+            if (taskListController.selectedTime != null)
               Text(
-                'Time: ${selectedTime!.format(context)}',
+                'Time: ${taskListController.selectedTime!.format(context)}',
                 style: TextStyle(fontSize: 16),
               ),
           ],
@@ -111,30 +105,51 @@ class _DialogBoxState extends State<DialogBox> {
       actions: [
         CommonTextButton(
           onPressed: () {
-            // Navigator.of(context).pop();
-            widget.onCancel();
+
+            Navigator.of(context).pop();
           },
           buttonText: 'Cancel',
-
         ),
-        CommonTextButton(  onPressed: () {
-          if (widget.controller.text.trim().isEmpty ||
-              selectedDate == null ||
-              selectedTime == null ||
-              selectedPriority == null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Please fill in all fields.'),
-                duration: Duration(seconds: 2),
-              ),
-            );
-          } else {
-            context.read<TaskListViewModel>().setSelectDateAndTime(selectedDate!, selectedTime!, selectedPriority!, desc.text.trim());
-            // Pass selectedPriority and description to the onSave function
-            widget.onSave();
-          }
-        }, buttonText: 'Save')
+        CommonTextButton(
+          onPressed: () {
+            if (controller.text.trim().isEmpty ||desc.text.isEmpty||
+                taskListController.selectedDate == null ||
+                taskListController.selectedTime == null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Please fill in all fields.'),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+            } else {
+              if (widget.isEditMode) {
+                // If in edit mode, call the editTask method
+                taskListController.editTask(widget.index, controller.text.trim(),
 
+                  taskListController.selectedDate!,
+                  taskListController.selectedTime!,
+                  desc.text.trim(),
+                  taskListController.selectedPriority.value);
+               taskListController.update();
+                Navigator.of(context).pop();
+              }
+              else{
+                taskListController.saveNewTask(
+                  controller.text.trim(),
+
+                  taskListController.selectedDate!,
+                  taskListController.selectedTime!,
+                  desc.text.trim(),
+                  taskListController.selectedPriority.value,
+                );
+                Navigator.of(context).pop();
+
+              }
+              controller.clear();
+            }
+          },
+          buttonText: 'Save',
+        ),
       ],
     );
   }

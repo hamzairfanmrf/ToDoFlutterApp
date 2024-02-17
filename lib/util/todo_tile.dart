@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:todoflutter/util/colors.dart';
 
 class ToDoTile extends StatelessWidget {
   final String taskName;
@@ -10,9 +9,10 @@ class ToDoTile extends StatelessWidget {
   final DateTime dateTime;
   final String description; // New field for description
   final String priority; // New field for priority
-  Function(bool?)? onChanged;
-  Function(BuildContext)? deleteFunction;
-  Function(BuildContext, String)? editFunction;
+  final Color textColor;
+  final Function(bool?)? onChanged;
+  final Function(BuildContext)? deleteFunction;
+  final Function(BuildContext, String)? editFunction;
 
   ToDoTile({
     Key? key,
@@ -25,9 +25,10 @@ class ToDoTile extends StatelessWidget {
     required this.dateTime,
     required this.description, // Include description in the constructor
     required this.priority, // Include priority in the constructor
+    required this.textColor
   }) : super(key: key);
 
-  TextEditingController _controller = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +47,7 @@ class ToDoTile extends StatelessWidget {
                 _controller.text = taskName;
               },
               icon: Icons.edit,
-              backgroundColor: Colors.blue,
+              backgroundColor: AppColors.blueColor,
               borderRadius: BorderRadius.circular(12),
             ),
           ],
@@ -66,7 +67,7 @@ class ToDoTile extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: Colors.yellow,
+            color: AppColors.yellowColor,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
@@ -78,7 +79,7 @@ class ToDoTile extends StatelessWidget {
                   Checkbox(
                     value: taskCompleted,
                     onChanged: onChanged,
-                    activeColor: Colors.black,
+                    activeColor: AppColors.blackColor,
                   ),
 
                   // Task name
@@ -88,6 +89,7 @@ class ToDoTile extends StatelessWidget {
                       decoration: taskCompleted
                           ? TextDecoration.lineThrough
                           : TextDecoration.none,
+                      color: textColor
                     ),
                   ),
                 ],
@@ -96,11 +98,16 @@ class ToDoTile extends StatelessWidget {
                 children: [
                   SizedBox(
                       width: MediaQuery.of(context).size.width/2,
-                      child: Text('Description: $description')), // Display description
+                      child: Text('Description: $description',
+                      style: TextStyle(
+                          color: textColor
+                      ),
+
+                      )), // Display description
 
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 5,
               ),
               Row(
@@ -116,7 +123,12 @@ class ToDoTile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   // Date
-                  Text('${dateTime.day}/${dateTime.month}/${dateTime.year}'),
+                  Text('${dateTime.day}/${dateTime.month}/${dateTime.year}',
+                  style: TextStyle(
+                      color: textColor
+                  ),
+
+                  ),
 
                   // Status
                   Container(

@@ -1,138 +1,142 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
+import 'package:get/get.dart';
 import 'package:todoflutter/model/todolistmodel.dart';
-
 import '../data/database.dart';
 import '../util/dialog_box.dart';
 
+class TaskListViewModel extends GetxController {
+  final ToDoDataBase db = ToDoDataBase.instance;
+  TextEditingController controller = TextEditingController();
+  RxInt completeTasks = 0.obs;
+  RxString selectedPriority = 'High Priority'.obs;
+  RxString? desc;
+  RxBool isDarkEnabled = false.obs;
+  final RxString _dropdownValue = 'All Items'.obs;
+  final RxList<String> _priorityItems = <String>['High Priority', 'Normal Priority'].obs;
 
-class TaskListViewModel extends ChangeNotifier{
+  RxList<String> get priorityItems => _priorityItems.toSet().toList().obs;
 
-  final _myBox = Hive.box('mybox');
-  ToDoDataBase db = ToDoDataBase();
-  TextEditingController controller=TextEditingController();
-  int completeTasks=0;
-   DateTime? selectedDate;
-   TimeOfDay? selectedTime;
-  String? selectedPriority;
-  String? desc;
-  bool isDarkEnabled=false;
+  Rx<TimeOfDay?> _selectedTime = TimeOfDay.now().obs;
 
-  setIsDarkEnabled(bool value){
-    if(isDarkEnabled){
-      isDarkEnabled=false;
-    }
-    else{
-      isDarkEnabled=value;
-    }
-    notifyListeners();
+  set selectedDate(DateTime? value) => _selectedDate.value = value!;
+  set selectedTime(TimeOfDay? value) => _selectedTime.value = value;
+
+  DateTime? get selectedDate => _selectedDate.value;
+  TimeOfDay? get selectedTime => _selectedTime.value;
+
+  void setSelectedTime(TimeOfDay newValue) {
+    _selectedTime.value = newValue;
   }
 
+  RxString get dropdownValue => _dropdownValue;
 
-   setSelectDateAndTime(DateTime s,TimeOfDay t,String sP,String d){
-     selectedDate=s;
-     selectedTime=t;
-     selectedPriority=sP;
-     desc=d;
-     notifyListeners();
+  // void setDropdownValue(String newValue) {
+  //   // _dropdownValue.value = newValue;
+  //   selectedPriority = newValue.obs;
+  // }
 
-   }
+  Rx<DateTime> _selectedDate = DateTime.now().obs;
 
 
-   setCompletedTask(int v){
-     completeTasks=v;
-      notifyListeners();
-   }
-  checkData(BuildContext context){
-    if (_myBox.get("TODOLIST") == null) {
+
+  void setSelectedDate(DateTime newValue) {
+    _selectedDate.value = newValue;
+    update();
+  }
+  void setSelectedPriority(String pr){
+    selectedPriority.value=pr;
+    update();
+  }
+
+  setIsDarkEnabled(bool value) {
+    isDarkEnabled.value = value;
+  }
+
+  setSelectDateAndTime(DateTime s, TimeOfDay t, String sP, String d) {
+    _selectedDate = s.obs;
+    _selectedTime.value = t;
+    selectedPriority = sP.obs;
+    desc = d.obs;
+  }
+
+  void checkData() {
+    if (db.isBoxNull()) {
       db.createInitialData();
     } else {
-      // there already exists data
-      db.loadData(context);
+      db.loadData();
     }
-    // notifyListeners();
   }
 
-  void editTask(int index) {
+  void editTask(int index,String text, DateTime selectedDate,
+      TimeOfDay selectedTime, String desc, String prior) {
     final task = db.toDoList[index];
-
-    // Update task details
-    task.title = controller.text.trim();
-    task.selectedDate = selectedDate!;
-    task.selectedTime = selectedTime!;
-    task.description = desc!; // Added line to update description
-
-    // Update the database
+    task.title = text;
+    task.selectedDate = selectedDate;
+    task.selectedTime = selectedTime;
+    task.description = desc;
+    task.priority=prior;
     db.updateDataBase();
-
-    // Clear the controller and selectedDate/selectedTime
     controller.clear();
-    selectedDate = null;
-    selectedTime = null;
 
-    notifyListeners();
+
   }
 
 
   void checkBoxChanged(bool? value, int index) {
     if (value != null) {
-      // Update task completion status and status text
       db.toDoList[index].taskCompleted = value;
       db.toDoList[index].status = value ? 'Completed' : 'Not Completed';
-
-      // Update the completeTasks count
       if (value) {
-        completeTasks++;
+        completeTasks.value++;
       } else {
-        if (completeTasks != 0) {
-          completeTasks--;
+        if (completeTasks.value != 0) {
+          completeTasks.value--;
         }
       }
-
-      // Update additionalParameter in the corresponding task
-      db.toDoList[index].additionalParameter = completeTasks;
-
-      // Update the database
+      db.toDoList[index].additionalParameter = completeTasks.value;
+      update();
       db.updateDataBase();
-      notifyListeners();
     }
   }
 
-   saveNewTask(String text,BuildContext context,DateTime selectedDate,
-   TimeOfDay selectedTime,String desc,String prior) {
-    db.toDoList.add(ToDoListModel(title: text, status: 'Not Complete', selectedDate: selectedDate, selectedTime: selectedTime, taskCompleted: false, additionalParameter: completeTasks,
-    description: desc,priority: prior
-
+  saveNewTask(String text, DateTime selectedDate,
+      TimeOfDay selectedTime, String desc, String prior) {
+    db.toDoList.add(ToDoListModel(
+      title: text,
+      status: 'Not Complete',
+      selectedDate: selectedDate,
+      selectedTime: selectedTime,
+      taskCompleted: false,
+      additionalParameter: completeTasks.value,
+      description: desc,
+      priority: prior,
     ));
-    /// remeber to call this when function is called
     controller.clear();
-    Navigator.of(context).pop();
+    setCompletedTasks(completeTasks.value);
+    update();
     db.updateDataBase();
-    notifyListeners();
+
+
+
   }
-   createNewTask(BuildContext context) {
+
+  createNewTask(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) {
-        return DialogBox(
-          controller: controller,
-          onSave: (){
-            saveNewTask(controller.text.trim(),context,selectedDate!,selectedTime!,desc!,selectedPriority!);
-            controller.clear();
-          },
-          onCancel: () => Navigator.of(context).pop()
+        return DialogBox(isEditMode: false, index: 0
         );
       },
     );
-    notifyListeners();
   }
 
-  // delete task
+  void setCompletedTasks(int v) {
+    completeTasks.value = v;
+  }
+
   void deleteTask(int index) {
     db.toDoList.removeAt(index);
     db.updateDataBase();
-    notifyListeners();
+    update();
   }
-
-
 }
