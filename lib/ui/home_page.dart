@@ -34,7 +34,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<TaskListViewModel>(
-      init: TaskListViewModel(), // Initialize your controller here
+      init: TaskListViewModel(), // controller is initialized here
       builder: (controller) {
         int completedTasks = controller.completeTasks.value;
 
@@ -53,10 +53,11 @@ class _HomePageState extends State<HomePage> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               CommonElevatedButton(
+
                 onPressed: () {
                   controller.createNewTask(context);
                 },
-                icon: Icons.add,
+                icon: Icons.add, isFromHome: true,
               ),
 
               const SizedBox(
@@ -75,7 +76,7 @@ class _HomePageState extends State<HomePage> {
 
                   }
                 },
-                icon: Icons.cloud,
+                icon: Icons.cloud, isFromHome: true,
               ),
 
             ],
@@ -259,12 +260,6 @@ class _HomePageState extends State<HomePage> {
                           builder: (context) {
                             return DialogBox(isEditMode: true, index: index,
 
-                              // controller: controller.controller,
-                              // onSave: () {
-                              //   controller.editTask(index);
-                              //   Navigator.of(context).pop();
-                              // },
-                              // onCancel: () => Navigator.of(context).pop(),
                             );
                           },
                         );

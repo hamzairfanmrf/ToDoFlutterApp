@@ -3,12 +3,15 @@ import 'package:todoflutter/util/colors.dart';
 
 class CommonElevatedButton extends StatelessWidget {
   final VoidCallback onPressed;
-  final IconData icon;
-
+  final IconData? icon;
+final String? txt;
+final bool isFromHome;
   const CommonElevatedButton({
     Key? key,
     required this.onPressed,
-    required this.icon,
+     this.icon,
+    this.txt,
+    required this.isFromHome
   }) : super(key: key);
 
   @override
@@ -17,10 +20,10 @@ class CommonElevatedButton extends StatelessWidget {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         primary: AppColors.primaryColor,
-        shape: CircleBorder(),
+        shape: isFromHome?const CircleBorder():const RoundedRectangleBorder(),
         padding: EdgeInsets.all(16),
       ),
-      child: Icon(icon, color: AppColors.whiteColor),
+      child: icon==null?Text(txt!):Icon(icon, color: AppColors.whiteColor),
     );
   }
 }

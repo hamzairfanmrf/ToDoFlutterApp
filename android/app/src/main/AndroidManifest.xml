@@ -2,7 +2,11 @@
     package="com.example.todoflutter">
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-   <application
+    <!-- Include comments about the purpose of storage permission -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <application
         android:label="todoflutter"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">

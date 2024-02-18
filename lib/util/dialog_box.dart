@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+
 import 'package:todoflutter/util/text_button.dart';
 import 'package:todoflutter/view_model/tasklistviewmodel.dart';
+
+import 'my_button.dart';
 
 class DialogBox extends StatefulWidget {
   final bool isEditMode;
@@ -22,7 +25,7 @@ class _DialogBoxState extends State<DialogBox> {
   Widget build(BuildContext context) {
     final taskListController = Get.find<TaskListViewModel>();
 
-    return AlertDialog(
+    return Obx(() =>AlertDialog(
       title: const Text('Add New Task'),
       content: SingleChildScrollView(
         child: Column(
@@ -60,20 +63,21 @@ class _DialogBoxState extends State<DialogBox> {
 
 
             const SizedBox(height: 20),
-            ElevatedButton(
+            CommonElevatedButton(
               onPressed: () async {
-                final DateTime? date = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime(2000),
-                  lastDate: DateTime(2101),
-                );
+              final DateTime? date = await showDatePicker(
+                context: context,
+                initialDate: DateTime.now(),
+                firstDate: DateTime(2000),
+                lastDate: DateTime(2101),
+              );
 
-                if (date != null) {
-                  taskListController.setSelectedDate(date);
-                }
-              },
-              child: const Text('Pick Date'),
+              if (date != null) {
+                taskListController.setSelectedDate(date);
+              }
+            },
+              txt: "Pick Date", isFromHome: false,
+
             ),
             if (taskListController.selectedDate != null)
               Text(
@@ -81,7 +85,7 @@ class _DialogBoxState extends State<DialogBox> {
                 style: TextStyle(fontSize: 16),
               ),
             const SizedBox(height: 20),
-            ElevatedButton(
+            CommonElevatedButton(
               onPressed: () async {
                 final TimeOfDay? time = await showTimePicker(
                   context: context,
@@ -92,8 +96,10 @@ class _DialogBoxState extends State<DialogBox> {
                   taskListController.setSelectedTime(time);
                 }
               },
-              child: const Text('Pick Time'),
+              txt: "Pick Time", isFromHome: false,
+
             ),
+
             if (taskListController.selectedTime != null)
               Text(
                 'Time: ${taskListController.selectedTime!.format(context)}',
@@ -151,6 +157,6 @@ class _DialogBoxState extends State<DialogBox> {
           buttonText: 'Save',
         ),
       ],
-    );
+    ));
   }
 }

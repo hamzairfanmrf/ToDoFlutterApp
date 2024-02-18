@@ -19,14 +19,14 @@ class ToDoDataBase {
   static ToDoDataBase get instance => _instance;
 
 
-
+//when app loads first time
   void createInitialData() {
     toDoList = [];
   }
   bool isBoxNull() {
     return _myBox.get("TODOLIST") == null;
   }
-
+//load data stored in local storage
   void loadData() {
     if (_myBox.containsKey("TODOLIST")) {
       toDoList = (_myBox.get("TODOLIST") as List<dynamic>)
@@ -37,7 +37,7 @@ class ToDoDataBase {
     }
   }
 
-
+//update the database in case of edit or insertion
   void updateDataBase() {
     _myBox.put("TODOLIST", toDoList.cast<dynamic>());
 
