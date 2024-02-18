@@ -4,13 +4,18 @@ import 'package:todoflutter/util/colors.dart';
 import 'package:todoflutter/view_model/weatherViewModel.dart';
 
 class WeatherDisplay extends StatelessWidget {
+
+
   @override
   Widget build(BuildContext context) {
+
     return Obx(() {
       final weatherController = Get.find<WeatherViewModel>();
-      final weatherData = weatherController.weatherData.value;
+      var weatherData=weatherController.weatherData.value;
+      print(weatherController.weatherData.value!.weatherDescription);
 
-      return Card(
+      return
+        Card(
         elevation: 4,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),

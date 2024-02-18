@@ -21,13 +21,15 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late TaskListViewModel _controller;
-  WeatherViewModel weatherController=WeatherViewModel();
+  final  weatherController=Get.put(WeatherViewModel(),permanent: true);
+
 
   @override
   void initState() {
     super.initState();
     _controller = TaskListViewModel();
     _controller.checkData();
+
   }
   @override
   Widget build(BuildContext context) {

@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Get.put(WeatherViewModel());
+    Get.put(WeatherViewModel(),permanent: true);
     Get.put(TaskListViewModel());
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,

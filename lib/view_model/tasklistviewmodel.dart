@@ -16,7 +16,7 @@ class TaskListViewModel extends GetxController {
 
   RxList<String> get priorityItems => _priorityItems.toSet().toList().obs;
 
-  Rx<TimeOfDay?> _selectedTime = TimeOfDay.now().obs;
+  final Rx<TimeOfDay?> _selectedTime = TimeOfDay.now().obs;
 
   set selectedDate(DateTime? value) => _selectedDate.value = value!;
   set selectedTime(TimeOfDay? value) => _selectedTime.value = value;
@@ -49,14 +49,20 @@ class TaskListViewModel extends GetxController {
   }
 
   setIsDarkEnabled(bool value) {
-    isDarkEnabled.value = value;
+    if(isDarkEnabled.value){
+      isDarkEnabled.value=false;
+    }
+    else{
+      isDarkEnabled.value = value;
+    }
+
   }
 
   setSelectDateAndTime(DateTime s, TimeOfDay t, String sP, String d) {
-    _selectedDate = s.obs;
+    _selectedDate.value = s;
     _selectedTime.value = t;
-    selectedPriority = sP.obs;
-    desc = d.obs;
+    selectedPriority.value = sP;
+    desc!.value = d;
   }
 
   void checkData() {
@@ -76,6 +82,7 @@ class TaskListViewModel extends GetxController {
     task.description = desc;
     task.priority=prior;
     db.updateDataBase();
+
     controller.clear();
 
 

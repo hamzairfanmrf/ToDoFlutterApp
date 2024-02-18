@@ -134,7 +134,7 @@ class WeatherViewModel extends GetxController {
         final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
         weatherData.value = WeatherModel.fromJson(jsonResponse);
 
-        // print(weatherData.value!.weatherDescription);
+        print(weatherData.value!.weatherDescription);
 
       } else {
         throw Exception('Failed to load weather data');
